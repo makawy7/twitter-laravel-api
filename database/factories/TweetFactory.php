@@ -19,7 +19,7 @@ class TweetFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'body' => fake()->sentence(),
+            'body' => fake()->sentence(20),
             'created_at' => fake()->dateTimeBetween('-30 days', now())
         ];
     }
