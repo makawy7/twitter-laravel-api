@@ -29,8 +29,13 @@ class UserFactory extends Factory
             'avatar' => 'https://i.pravatar.cc/150?img=' . fake()->numberBetween(1, 70),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
+            'profile' => fake()->sentence(14),
+            'location' => fake()->city() . ', ' . fake()->country(),
+            'link' => 'https://laracasts.com/',
+            'link_text' => collect(['laracasts.com', 'laravel.com'])->random(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'created_at' => fake()->dateTimeBetween('-5 years', now())
         ];
     }
 
