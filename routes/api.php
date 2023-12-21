@@ -23,6 +23,16 @@ Route::get('/tweets', function () {
     // sleep(2);
     return Tweet::with('user:id,name,username,avatar')->latest()->paginate(10);
 });
-Route::get('tweet/{tweet}', function (Tweet $tweet) {
+Route::get('/tweet/{tweet}', function (Tweet $tweet) {
     return $tweet->load('user:id,name,username,avatar');
+});
+Route::post('/tweets', function (Request $request) {
+    $request->validate([
+        'body' => 'required',
+    ]);
+
+    return Tweet::create([
+        'user_id' => 1,
+        'body' => $request->body
+    ]);
 });
