@@ -41,3 +41,7 @@ Route::post('/tweets', function (Request $request) {
 Route::get('/users/{user}', function (User $user) {
     return $user->load('tweets');
 });
+
+Route::get('/users/{user}/tweets', function (User $user) {
+    return $user->tweets()->with('user:id,name,username,avatar')->latest()->paginate(10);
+});
