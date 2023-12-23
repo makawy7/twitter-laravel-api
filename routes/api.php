@@ -108,3 +108,8 @@ Route::middleware('auth:sanctum')->post('/follow/{user}', function (User $user) 
 Route::middleware('auth:sanctum')->post('/unfollow/{user}', function (User $user) {
     return response()->json(auth()->user()->unfollow($user), 201);
 });
+
+Route::middleware('auth:sanctum')->delete('/tweets/{tweet}', function (Tweet $tweet) {
+    abort_if($tweet->user->id !== auth()->user()->id, 403);
+    return response()->json($tweet->delete(), 200);
+});
