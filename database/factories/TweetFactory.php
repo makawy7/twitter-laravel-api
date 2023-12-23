@@ -17,15 +17,15 @@ class TweetFactory extends Factory
      */
     public function definition(): array
     {
-        // return [
-        //     'user_id' => User::factory(),
-        //     'body' => fake()->sentence(20),
-        //     'created_at' => fake()->dateTimeBetween('-30 days', now())
-        // ];
         return [
-            'user_id' => 1,
+            'user_id' => User::factory(),
             'body' => fake()->sentence(20),
             'created_at' => fake()->dateTimeBetween('-30 days', now())
         ];
+        // return [
+        //     'user_id' => 1,
+        //     'body' => fake()->sentence(20),
+        //     'created_at' => fake()->dateTimeBetween('-30 days', now())
+        // ];
     }
 }
