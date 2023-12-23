@@ -99,3 +99,12 @@ Route::post('/register', function (Request $request) {
     $user->follows()->attach($user);
     return response()->json($user, 201);
 });
+Route::middleware('auth:sanctum')->get('/is_following/{user}', function (User $user) {
+    return response()->json(auth()->user()->isFollowing($user), 200);
+});
+Route::middleware('auth:sanctum')->post('/follow/{user}', function (User $user) {
+    return response()->json(auth()->user()->follow($user), 201);
+});
+Route::middleware('auth:sanctum')->post('/unfollow/{user}', function (User $user) {
+    return response()->json(auth()->user()->unfollow($user), 201);
+});
