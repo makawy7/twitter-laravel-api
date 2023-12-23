@@ -1,6 +1,7 @@
-# Project Name
+# Twitter REST API
 
-A brief description of your project.
+- [Twitter React Native App](https://github.com/makawy7/twitter-react-native)
+  - This is the React Native app that uses the API provided by this Laravel project. Check it out for the front-end implementation.
 
 ## Table of Contents
 
@@ -8,7 +9,6 @@ A brief description of your project.
 -   [Endpoints](#endpoints)
 -   [Methods](#methods)
 -   [Usage](#usage)
--   [License](#license)
 
 ## Introduction
 
