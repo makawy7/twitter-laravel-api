@@ -3,9 +3,16 @@
 use App\Models\User;
 use App\Models\Tweet;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\TweetController;
+use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\TweetAllController;
+use App\Http\Controllers\UserFollowController;
+use App\Http\Controllers\UserTweetsController;
 use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\UserProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,98 +25,24 @@ use Illuminate\Validation\ValidationException;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::post('/login', [AuthController::class, 'store'])->name('login');
+Route::post('/register', [RegisterController::class, 'store'])->name('register');
+Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'destroy'])->name('logout');
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/tweets', [TweetController::class, 'index'])->name('tweet.index');
+    Route::post('/tweets', [TweetController::class, 'store'])->name('tweet.store');
+    Route::get('/tweets/{tweet}', [TweetController::class, 'show'])->name('tweet.show');
+    Route::delete('/tweets/{tweet}', [TweetController::class, 'destroy'])->name('tweet.delete');
+
+    Route::get('/tweets_all', [TweetAllController::class, 'index'])->name('tweet.index.all');
 });
 
-Route::get('/tweets_all', function () {
-    return Tweet::with('user:id,name,username,avatar')->latest()->paginate(10);
-});
+Route::get('/users/{user}', [UserProfileController::class, 'show'])->name('user.profile.show');
+Route::get('/users/{user}/tweets', [UserTweetsController::class, 'index'])->name('user.tweets.index');
 
-Route::middleware('auth:sanctum')->get('/tweets', function () {
-    $following = auth()->user()->follows->pluck('id');
-    return Tweet::with('user:id,name,username,avatar')
-        ->whereIn('user_id', $following)
-        ->latest()
-        ->paginate(10);
-});
-
-Route::get('/tweets/{tweet}', function (Tweet $tweet) {
-    return $tweet->load('user:id,name,username,avatar');
-});
-Route::middleware('auth:sanctum')->post('/tweets', function (Request $request) {
-    $request->validate([
-        'body' => 'required',
-    ]);
-
-    return Tweet::create([
-        'user_id' => auth()->id(),
-        'body' => $request->body
-    ]);
-});
-
-Route::get('/users/{user}', function (User $user) {
-    return $user->load('tweets');
-});
-
-Route::get('/users/{user}/tweets', function (User $user) {
-    return $user->tweets()->with('user:id,name,username,avatar')->latest()->paginate(10);
-});
-
-
-Route::post('/login', function (Request $request) {
-    $request->validate([
-        'email' => 'required|email',
-        'password' => 'required',
-        'device_name' => 'required',
-    ]);
-
-    $user = User::where('email', $request->email)->first();
-
-    if (!$user || !Hash::check($request->password, $user->password)) {
-        throw ValidationException::withMessages([
-            'email' => ['The provided credentials are incorrect.'],
-        ]);
-    }
-
-    $token = $user->createToken($request->device_name)->plainTextToken;
-
-    return response()->json([
-        'token' => $token,
-        'user' => $user->only('id', 'name', 'username', 'email', 'avatar')
-    ], 201);
-});
-
-Route::middleware('auth:sanctum')->post('/logout', function (Request $request) {
-    $request->user()->currentAccessToken()->delete();
-    return response()->json('Logged out', 200);
-});
-
-Route::post('/register', function (Request $request) {
-    $validated = $request->validate([
-        'name' => 'required',
-        'email' => 'required|email|unique:users',
-        'username' => 'required|min:4|unique:users',
-        'password' => 'required|min:6|confirmed',
-    ]);
-
-    $validated['password'] = Hash::make($validated['password']);
-    $validated['avatar'] = 'https://i.pravatar.cc/150?img=' . fake()->numberBetween(1, 70);
-    $user = User::create($validated);
-    $user->follows()->attach($user);
-    return response()->json($user, 201);
-});
-Route::middleware('auth:sanctum')->get('/is_following/{user}', function (User $user) {
-    return response()->json(auth()->user()->isFollowing($user), 200);
-});
-Route::middleware('auth:sanctum')->post('/follow/{user}', function (User $user) {
-    return response()->json(auth()->user()->follow($user), 201);
-});
-Route::middleware('auth:sanctum')->post('/unfollow/{user}', function (User $user) {
-    return response()->json(auth()->user()->unfollow($user), 201);
-});
-
-Route::middleware('auth:sanctum')->delete('/tweets/{tweet}', function (Tweet $tweet) {
-    abort_if($tweet->user->id !== auth()->user()->id, 403);
-    return response()->json($tweet->delete(), 200);
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/follow/{user}', [UserFollowController::class, 'store'])->name('user.follow');
+    Route::post('/unfollow/{user}', [UserFollowController::class, 'destroy'])->name('user.unfollow');
+    Route::get('/is_following/{user}', [UserFollowController::class, 'isFollowing'])->name('user.isfollowing');
 });

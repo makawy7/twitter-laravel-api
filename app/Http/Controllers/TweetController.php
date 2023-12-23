@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Tweet;
-use App\Http\Requests\StoreTweetRequest;
+use Illuminate\Http\Request;
 use App\Http\Requests\UpdateTweetRequest;
 
 class TweetController extends Controller
@@ -13,7 +13,11 @@ class TweetController extends Controller
      */
     public function index()
     {
-        //
+        $following = auth()->user()->follows->pluck('id');
+        return Tweet::with('user:id,name,username,avatar')
+            ->whereIn('user_id', $following)
+            ->latest()
+            ->paginate(10);
     }
 
     /**
@@ -27,9 +31,16 @@ class TweetController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTweetRequest $request)
+    public function store(Request $request)
     {
-        //
+        $request->validate([
+            'body' => 'required',
+        ]);
+
+        return Tweet::create([
+            'user_id' => auth()->id(),
+            'body' => $request->body
+        ]);
     }
 
     /**
@@ -37,7 +48,7 @@ class TweetController extends Controller
      */
     public function show(Tweet $tweet)
     {
-        //
+        return $tweet->load('user:id,name,username,avatar');
     }
 
     /**
@@ -61,6 +72,7 @@ class TweetController extends Controller
      */
     public function destroy(Tweet $tweet)
     {
-        //
+        abort_if($tweet->user->id !== auth()->user()->id, 403);
+        return response()->json($tweet->delete(), 200);
     }
 }
