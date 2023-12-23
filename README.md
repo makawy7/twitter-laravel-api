@@ -18,7 +18,7 @@ This project is a Twitter-like API built using Laravel, providing authentication
 
 ### Authentication
 
--   **POST /login**
+-   **POST `/login`**
 
     -   Logs in a user.
     -   Parameters:
@@ -29,7 +29,7 @@ This project is a Twitter-like API built using Laravel, providing authentication
         -   token (string): User authentication token.
         -   user (object): User information (id, name, username, email, avatar).
 
--   **POST /register**
+-   **POST `/register`**
 
     -   Registers a new user.
     -   Parameters:
@@ -40,120 +40,61 @@ This project is a Twitter-like API built using Laravel, providing authentication
     -   Response:
         -   user (object): Newly registered user information.
 
--   **POST /logout**
+-   **POST `/logout`**
     -   Logs out the authenticated user.
     -   Requires authentication.
 
 ### Tweets
 
--   **GET /tweets**
+-   **GET `/tweets`**
     -   Retrieves tweets from users the authenticated user follows.
     -   Requires authentication.
--   **POST /tweets**
+
+-   **POST `/tweets`**
 
     -   Creates a new tweet.
     -   Parameters:
         -   body (string): Tweet content.
     -   Requires authentication.
 
--   **GET /tweets/{tweet}**
+-   **GET `/tweets/{tweet}`**
 
     -   Retrieves details of a specific tweet.
 
--   **DELETE /tweets/{tweet}**
+-   **DELETE `/tweets/{tweet}`**
 
     -   Deletes a specific tweet.
     -   Requires authentication.
 
--   **GET /tweets_all**
+-   **GET `/tweets_all`**
     -   Retrieves all tweets from all users.
     -   Requires authentication.
 
 ### User Profile
 
--   **GET /users/{user}**
+-   **GET `/users/{user}`**
 
     -   Retrieves details of a specific user.
 
--   **GET /users/{user}/tweets**
+-   **GET `/users/{user}/tweets`**
     -   Retrieves tweets posted by a specific user.
 
 ### Following
 
--   **POST /follow/{user}**
+-   **POST `/follow/{user}`**
 
     -   Follows a specific user.
     -   Requires authentication.
 
--   **POST /unfollow/{user}**
+-   **POST `/unfollow/{user}`**
 
     -   Unfollows a specific user.
     -   Requires authentication.
 
--   **GET /is_following/{user}**
+-   **GET `/is_following/{user}`**
     -   Checks if the authenticated user is following a specific user.
     -   Requires authentication.
 
-## Methods
-
-### AuthController
-
--   **store**
-
-    -   Logs in a user.
-
--   **destroy**
-    -   Logs out the authenticated user.
-
-### RegisterController
-
--   **store**
-    -   Registers a new user.
-
-### TweetController
-
--   **index**
-
-    -   Retrieves tweets from users the authenticated user follows.
-
--   **store**
-
-    -   Creates a new tweet.
-
--   **show**
-
-    -   Retrieves details of a specific tweet.
-
--   **destroy**
-    -   Deletes a specific tweet.
-
-### TweetAllController
-
--   **index**
-    -   Retrieves all tweets from all users.
-
-### UserProfileController
-
--   **show**
-    -   Retrieves details of a specific user.
-
-### UserTweetsController
-
--   **index**
-    -   Retrieves tweets posted by a specific user.
-
-### UserFollowController
-
--   **store**
-
-    -   Follows a specific user.
-
--   **destroy**
-
-    -   Unfollows a specific user.
-
--   **isFollowing**
-    -   Checks if the authenticated user is following a specific user.
 
 ## Usage
 
